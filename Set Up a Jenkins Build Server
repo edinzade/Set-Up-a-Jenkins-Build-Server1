@@ -1,0 +1,75 @@
+Set Up a Jenkins Build Server
+
+
+We will launch an EC2 instance, install Jenkins on that instance, and configure Jenkins to automatically spin up Jenkins build slave instances if build abilities need to be augmented on the instance.
+
+
+
+To prepare for this tutorial, you will need an AWS account, an AWS Identity and Access Management (IAM) user name and password, an Amazon EC2 key pair, and a configured Virtual Private Cloud (VPC). Detailed instructions can be found in Setting Up to Host a Web App on AWS.1
+
+
+Create a Security Group for Your Amazon EC2
+Instance
+
+
+
+A security group acts as a firewall that controls the traffic allowed to reach one or more EC2 instances. When you launch an instance, you can assign it one or more security groups. You add rules to each security group that control the traffic allowed to reach the instances to which the security group is assigned. Note that you can modify the rules for a security group at any time; the new rules take effect immediately.
+
+
+Decide who may access your instance, for example, a single computer or all trusted computers on a network. For this tutorial, you can use the public IP address of your computer. To find your IP address, use the checkip service from AWS3 or search for the phrase "what is my IP address" in any Internet search engine.
+If you are connecting through an ISP or from behind your firewall without a static IP address, you will need to find the range of IP addresses used by client computers. If you don't know this address range, you can use 0.0.0.0/0 for this tutorial. However, this is unsafe for production environments because it allows everyone to access your instance using SSH.
+2. Open the Amazon EC2 console at https://console.aws.amazon.com/ec2/.
+3. In the navigation bar, verify that US West (Oregon) is the selected
+region.
+4. In the left-hand navigation bar, choose Security Groups, and then click
+Create Security Group.
+5. In Security group name enter WebServerSG and provide a
+description.
+6. Choose your VPC from the list.
+7. On the Inbound tab, add the rules as follows:
+a. Click Add Rule, and then choose SSH from the Type list. Under Source, select Custom and in the text box enter the public IP address range that you decided on in step 1.
+b. Click Add Rule, and then choose HTTP from the Type list.
+c. Click Add Rule, and then choose Custom TCP Rule from the
+Type list. Under Port Range enter 8080.
+8. Click Create.
+
+
+Launch Your EC2 Instance
+
+
+
+Step 3: Install and Configure Jenkins
+
+
+To Connect to Your Instance from Linux or Mac OS X Using SSH
+1. Use the ssh command to connect to the instance. You will specify the private key (.pem) file and ec2-user@public_dns_name.
+You will see a response like the following:
+  Page 7
+$ ssh -i /path/my-key-pair.pem ec2-user@ec2-198-51-
+100-1.compute-1.amazonaws.com
+ The authenticity of host 'ec2-198-51-100-1.compute-
+1.amazonaws.com (10.254.142.33)' can't be
+established.
+
+
+Download and Install Jenkins
+To download and install Jenkins:
+1. To ensure that your software packages are up to date on your instance, use the following command to perform a quick software update:
+     [ec2-user ~]$ sudo yum update –y
+2. Add the Jenkins repo using the following command:
+3. Import a key file from Jenkins-CI to enable installation from the package:
+4. Install Jenkins:
+     [ec2-user ~]$ sudo yum install jenkins -y
+5. Start Jenkins as a service:
+     [ec2-user ~]$ sudo service jenkins start
+
+     Configure Jenkins
+Jenkins is now installed and running on your EC2 instance. To configure Jenkins:
+1. Connect to http://<your_server_public_DNS>:8080 from your favorite browser. You will be able to access Jenkins through its management interface:
+
+
+Step 4: Clean Up
+After completing this tutorial, be sure to delete the AWS resources that you created so that you do not continue to accrue charges.
+Delete Your EC2 Instance
+1. In the left-hand navigation bar of the Amazon EC2 console, choose Instances.
+2. Right-click on the instance you created earlier and select Instance State > Terminate.
